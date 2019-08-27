@@ -3,7 +3,6 @@
 import sys, os
 import re, struct
 from argparse import ArgumentParser, FileType, Namespace
-from bootimg import parse_bootimg_for_mkvendor
 
 """
 ======================== CONSTANTS ========================
@@ -19,21 +18,27 @@ SUPPORTED_ROM = {
 """
 ======================== GLOBAL PARAMETERS ========================
 """
-
 ARGS = ""               # Parsed argument namespace
+
 
 """
 ======================== UTILITIES ========================
 """
-
 def LOG(msg):
+    ''' 
+        Print debug messages when --verbose is assigned.
+    '''
     if ARGS.verbose:
         sys.stderr.write(msg)
 
+
 def parse_bootimg_for_mkvendor(bootimg):
-    ''' parse C8600-compatible bootimg for mkvendor.
+    ''' 
+        parse C8600-compatible bootimg for mkvendor.
         Comparing with its original version, this one kept all bootimg data
         in objects.
+
+        Modified from bootimg.py written by Liu DongMiao <liudongmiao@gmail.com>.
 
         write kernel to kernel[.gz]
         write ramdisk to ramdisk[.gz]
@@ -46,7 +51,8 @@ def parse_bootimg_for_mkvendor(bootimg):
     '''
     latin = lambda x: x.encode('latin')
 
-    result = Namespace(
+    # Use Namespace to store parsed data
+    result = Namespace (
         metadata = "",
         kernel = b"",
         ramdisk = b"",
@@ -205,6 +211,13 @@ def parse_cmdline():
         required=True
     )
     parser.add_argument(
+        "--output",
+        "-o",
+        type=str,
+        help="Target directory to put generated device configuration. Default is ./out",
+        default="./out"
+    )
+    parser.add_argument(
         "--verbose",
         "-v",
         help="Print debug messages",
@@ -212,26 +225,40 @@ def parse_cmdline():
     )
     return parser.parse_args()
 
-#
-# TODO: Function to check kernel processor and abi
-#
+"""
+======================== WORKFLOWS ========================
+"""
+def analyze_kernel_image():
+    # TODO: 分析内核映像的处理器类型，来决定BoardConfig.mk中的架构部分该填啥。
+    pass
+
+
+def make_use_of_ramdisk():
+    # TODO: 解包Ramdisk，并从中提取有用的文件。
+    # 包括：init.{ro.hardware}.rc、ueventd.{ro.hardware}.rc、fstab.{ro.hardware}、recovery.fstab。
+    pass
+
+
+def render_templates():
+    # TODO: 创建若干个闭包函数，处理具体的模板文件
+    # TODO: 用assert，在文件不存在时退出
+
+    pass
+
 
 """
-Workflows
+======================== MAIN ENTRANCE ========================
 """
-
-
-"""
-Main entrance
-"""
-
 def main():
+    # Parse command line. 
+    # This process can block some illegal inputs.
     global ARGS
     ARGS = parse_cmdline()
 
     # Parse boot image
     LOG("[INFO] Parsing boot image...\n")
     BOOTIMG_DATA = parse_bootimg_for_mkvendor(ARGS.boot_img)
+
 
 if __name__ == "__main__":
     main()
