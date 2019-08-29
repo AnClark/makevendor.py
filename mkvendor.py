@@ -246,6 +246,9 @@ def render_templates():
     pass
 
 
+def generate_vendorsetup_sh():
+    pass
+
 """
 ======================== MAIN ENTRANCE ========================
 """
@@ -255,8 +258,8 @@ def main():
     global ARGS
     ARGS = parse_cmdline()
 
-    # Parse boot image
-    LOG("[INFO] Parsing boot image...\n")
+    # Parse boot image.
+    LOG("Parsing boot image...\n")
     BOOTIMG_DATA = parse_bootimg_for_mkvendor(ARGS.boot_img)
 
 

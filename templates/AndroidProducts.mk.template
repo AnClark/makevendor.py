@@ -1,2 +1,9 @@
+################# AndroidProducts.mk #################
+# Entrance of your device config file.
+# Build system will load the ROM makefile specified by PRODUCT_MAKEFILES.
+#
+# Without this file, your device won't be found.
+
+
 PRODUCT_MAKEFILES := \
     $(LOCAL_DIR)/___ROM_TEMPLATE_FILE___.mk
